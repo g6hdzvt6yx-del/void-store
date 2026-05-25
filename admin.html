@@ -931,7 +931,7 @@ async function saveProduct() {
 
 // ══ DELETE ══
 function askDelete(id, name) {
-  deleteId = id;
+  deleteId = parseInt(id);
   document.getElementById('confirm-text').textContent = `Удалить «${name}»? Это действие нельзя отменить.`;
   document.getElementById('confirm-delete').classList.add('open');
 }
