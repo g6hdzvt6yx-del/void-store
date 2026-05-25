@@ -992,11 +992,11 @@ function closeConfirm() {
 
 async function confirmDelete() {
   if (!deleteId) return;
+  const idToDelete = deleteId;
   closeConfirm();
   try {
-    await apiDelete(deleteId);
-    allProducts = allProducts.filter(p => p.id !== deleteId);
-    deleteId = null;
+    await apiDelete(idToDelete);
+    allProducts = allProducts.filter(p => p.id !== idToDelete);
     updateStats();
     filterTable();
     document.getElementById('header-count').textContent = `${allProducts.length} товаров`;
