@@ -522,7 +522,7 @@ main { padding: 100px 32px 48px; max-width: 1200px; margin: 0 auto; }
           <input type="file" accept="image/*" id="f-img-file" onchange="handleFileSelect(event)">
           <div class="photo-upload-icon">↑</div>
           <div class="photo-upload-text">Перетащите фото или <span>выберите файл</span></div>
-          <div class="form-hint" style="margin-top:8px">Загрузка на imgbb.com (бесплатно)</div>
+          <div class="form-hint" style="margin-top:8px">Фото загружается в Supabase Storage</div>
         </div>
         <div class="upload-progress" id="upload-progress">
           <div class="upload-progress-bar" id="upload-progress-bar"></div>
@@ -560,7 +560,6 @@ main { padding: 100px 32px 48px; max-width: 1200px; margin: 0 auto; }
 const SUPABASE_URL = 'https://ioinfqbyurkpyhcnuxhu.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_RmcV-Xg-ZMeQJPx5X-2Dyg_QmO959Bd';
 const ADMIN_PASSWORD = 'adminvoid2026'; // ← Поменяйте пароль!
-const IMGBB_KEY = 'ee59dd3356aa83a69ce2d93fff43d953'; // ← Вставьте API-ключ imgbb (получить на imgbb.com/api)
 
 // ══ AUTH ══
 function doLogin() {
@@ -829,49 +828,53 @@ async function uploadFile(file) {
   };
   reader.readAsDataURL(file);
 
-  // Если нет ключа imgbb — просто используем base64 или просим ввести URL
-  if (!IMGBB_KEY) {
-    showToast('Укажите IMGBB_KEY в коде для загрузки фото. Можно вставить ссылку вручную.', true);
-    return;
-  }
-
-  // Загружаем на imgbb
+  // Загружаем в Supabase Storage
   const progress = document.getElementById('upload-progress');
   const bar = document.getElementById('upload-progress-bar');
   progress.style.display = 'block';
   bar.style.width = '30%';
 
   try {
-    const base64 = await fileToBase64(file);
+    // Уникальное имя файла
+    const ext = file.name.split('.').pop();
+    const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+
     bar.style.width = '60%';
-    const formData = new FormData();
-    formData.append('image', base64.split(',')[1]);
-    const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, {
-      method: 'POST', body: formData
-    });
+
+    const res = await fetch(
+      `${SUPABASE_URL}/storage/v1/object/products/${fileName}`,
+      {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+          'Content-Type': file.type,
+          'x-upsert': 'true'
+        },
+        body: file
+      }
+    );
+
     bar.style.width = '90%';
-    const data = await res.json();
-    if (data.success) {
-      document.getElementById('f-img-uploaded').value = data.data.url;
-      bar.style.width = '100%';
-      showToast('Фото загружено!');
-      setTimeout(() => { progress.style.display = 'none'; bar.style.width = '0'; }, 1000);
-    } else {
-      throw new Error(data.error?.message || 'Ошибка imgbb');
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.message || 'Ошибка загрузки');
     }
+
+    // Получаем публичную ссылку
+    const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/products/${fileName}`;
+    document.getElementById('f-img-uploaded').value = publicUrl;
+
+    bar.style.width = '100%';
+    showToast('Фото загружено!');
+    setTimeout(() => { progress.style.display = 'none'; bar.style.width = '0'; }, 1000);
+
   } catch(e) {
     showToast('Ошибка загрузки фото: ' + e.message, true);
     progress.style.display = 'none';
+    bar.style.width = '0';
   }
-}
-
-function fileToBase64(file) {
-  return new Promise((res, rej) => {
-    const r = new FileReader();
-    r.onload = () => res(r.result);
-    r.onerror = rej;
-    r.readAsDataURL(file);
-  });
 }
 
 // ══ SAVE ══
