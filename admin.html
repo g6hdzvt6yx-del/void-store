@@ -498,8 +498,8 @@ main { padding: 100px 32px 48px; max-width: 1200px; margin: 0 auto; }
 
     <div class="form-group">
       <label class="form-label">Цвета</label>
-      <input class="form-input" type="text" id="f-colors" placeholder="#1a1a1a,#f0ece4,#4a4a4a">
-      <div class="form-hint">HEX-коды через запятую</div>
+      <input class="form-input" type="text" id="f-colors" placeholder="черный, белый, серый, бежевый">
+      <div class="form-hint">Названия цветов через запятую: черный, белый, серый, бежевый, хаки, синий, красный и др.</div>
     </div>
 
     <div class="form-group">
@@ -513,7 +513,7 @@ main { padding: 100px 32px 48px; max-width: 1200px; margin: 0 auto; }
       <div id="photo-url-tab">
         <input class="form-input" type="url" id="f-img" placeholder="https://i.ibb.co/...">
         <div class="form-hint">Вставьте прямую ссылку на изображение (.jpg, .png, .webp)</div>
-        <img id="img-preview-url" style="width:100%;height:160px;object-fit:cover;margin-top:12px;display:none">
+        <img id="img-preview-url" style="width:100%;max-height:300px;object-fit:contain;margin-top:12px;display:none;background:var(--bg3)">
       </div>
 
       <!-- Upload tab -->
@@ -527,7 +527,7 @@ main { padding: 100px 32px 48px; max-width: 1200px; margin: 0 auto; }
         <div class="upload-progress" id="upload-progress">
           <div class="upload-progress-bar" id="upload-progress-bar"></div>
         </div>
-        <img id="img-preview-upload" style="width:100%;height:160px;object-fit:cover;margin-top:12px;display:none">
+        <img id="img-preview-upload" style="width:100%;max-height:300px;object-fit:contain;margin-top:12px;display:none;background:var(--bg3)">
         <input type="hidden" id="f-img-uploaded">
       </div>
     </div>
@@ -757,7 +757,7 @@ function openModal(id) {
     document.getElementById('f-tag').value = p.tag || '';
     document.getElementById('f-show').value = String(p.show !== false);
     document.getElementById('f-sizes').value = p.sizes || '';
-    document.getElementById('f-colors').value = p.colors || '';
+    document.getElementById('f-colors').value = hexToColorNames(p.colors || '');
     document.getElementById('f-img').value = p.img || '';
     if (p.img) {
       const prev = document.getElementById('img-preview-url');
@@ -781,7 +781,7 @@ function clearModal() {
   document.getElementById('f-category').value = 'top';
   document.getElementById('f-show').value = 'true';
   document.getElementById('f-sizes').value = '';
-  document.getElementById('f-colors').value = '#1a1a1a';
+  document.getElementById('f-colors').value = 'черный';
   document.getElementById('img-preview-url').style.display = 'none';
   document.getElementById('img-preview-upload').style.display = 'none';
   document.getElementById('btn-save').disabled = false;
@@ -877,6 +877,50 @@ async function uploadFile(file) {
   }
 }
 
+// ══ ЦВЕТА ══
+const COLOR_MAP = {
+  'черный': '#1a1a1a', 'чёрный': '#1a1a1a', 'black': '#1a1a1a',
+  'белый': '#f0ece4', 'white': '#f0ece4',
+  'серый': '#4a4a4a', 'gray': '#4a4a4a', 'grey': '#4a4a4a',
+  'светло-серый': '#9a9a9a', 'светлосерый': '#9a9a9a',
+  'бежевый': '#c8b89a', 'beige': '#c8b89a',
+  'коричневый': '#8b7355', 'brown': '#8b7355',
+  'хаки': '#6b7c4a', 'khaki': '#6b7c4a',
+  'синий': '#2c4a7c', 'blue': '#2c4a7c',
+  'темно-синий': '#1a2d4a', 'темносиний': '#1a2d4a', 'navy': '#1a2d4a',
+  'голубой': '#5b9bd5', 'light blue': '#5b9bd5',
+  'красный': '#c0392b', 'red': '#c0392b',
+  'бордовый': '#7b2d2d', 'burgundy': '#7b2d2d', 'wine': '#7b2d2d',
+  'зеленый': '#2d7b4a', 'зелёный': '#2d7b4a', 'green': '#2d7b4a',
+  'оливковый': '#6b7c3a', 'olive': '#6b7c3a',
+  'желтый': '#d4a017', 'жёлтый': '#d4a017', 'yellow': '#d4a017',
+  'оранжевый': '#d4651a', 'orange': '#d4651a',
+  'розовый': '#d4819a', 'pink': '#d4819a',
+  'фиолетовый': '#6b4a9a', 'purple': '#6b4a9a',
+  'кремовый': '#f5f0e8', 'cream': '#f5f0e8',
+  'молочный': '#f5f0e8', 'ivory': '#f5f5dc',
+  'терракот': '#c0613a', 'terracotta': '#c0613a',
+};
+
+function colorToHex(colorStr) {
+  return colorStr.split(',').map(c => {
+    const trimmed = c.trim().toLowerCase();
+    if (trimmed.startsWith('#')) return trimmed;
+    return COLOR_MAP[trimmed] || '#1a1a1a';
+  }).join(',');
+}
+
+function hexToColorNames(hexStr) {
+  const reverseMap = {};
+  Object.entries(COLOR_MAP).forEach(([name, hex]) => {
+    if (!reverseMap[hex]) reverseMap[hex] = name;
+  });
+  return hexStr.split(',').map(h => {
+    const trimmed = h.trim().toLowerCase();
+    return reverseMap[trimmed] || trimmed;
+  }).join(', ');
+}
+
 // ══ SAVE ══
 async function saveProduct() {
   const name = document.getElementById('f-name').value.trim();
@@ -900,7 +944,7 @@ async function saveProduct() {
     tag: document.getElementById('f-tag').value.trim() || null,
     show: document.getElementById('f-show').value === 'true',
     sizes: document.getElementById('f-sizes').value.trim() || 'M',
-    colors: document.getElementById('f-colors').value.trim() || '#1a1a1a',
+    colors: colorToHex(document.getElementById('f-colors').value.trim() || 'черный'),
     img: img || null
   };
 
