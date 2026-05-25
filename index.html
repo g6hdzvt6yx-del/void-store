@@ -1797,8 +1797,7 @@ function selectPayment(el) {
   el.classList.add('active');
 }
 
-function submitOrder() {
-  // Simple validation
+async function submitOrder() {
   const inputs = document.querySelectorAll('#checkout .form-input');
   let valid = true;
   inputs.forEach(inp => {
@@ -1807,6 +1806,41 @@ function submitOrder() {
   });
   if(!valid) { showToast('Заполните все поля'); return; }
 
+  // Собираем данные заказа
+  const fields = document.querySelectorAll('#checkout .form-input');
+  const name = fields[0].value + ' ' + fields[1].value;
+  const email = fields[2].value;
+  const phone = fields[3].value;
+  const city = fields[4].value;
+  const address = fields[5].value;
+  const index = fields[6].value;
+  const delivery = document.querySelector('#checkout .form-select').value;
+  const payment = document.querySelector('.payment-method.active .payment-method-name').textContent;
+
+  // Список товаров
+  const itemsList = cart.map(i =>
+    `• ${i.name} × ${i.qty} — ₽${(i.price * i.qty).toLocaleString('ru')}`
+  ).join('\n');
+  const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+
+  // Текст сообщения
+  const message = `🛍 Новый заказ!\n\n👤 ${name}\n📞 ${phone}\n📧 ${email}\n\n📍 ${city}, ${address}, ${index}\n🚚 ${delivery}\n💳 ${payment}\n\n📦 Товары:\n${itemsList}\n\n💰 Итого: ₽${total.toLocaleString('ru')}`;
+
+  // Отправка в Telegram
+  try {
+    await fetch(`https://api.telegram.org/bot8947615382:AAEvRlbh65Tddw2w4IqmWkPGv80YNdtIsv8/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: '7707609904',
+        text: message
+      })
+    });
+  } catch(e) {
+    console.error('Ошибка отправки в Telegram:', e);
+  }
+
+  // Показываем экран успеха
   document.getElementById('checkout-wrap').style.display = 'none';
   document.getElementById('success-screen').classList.add('show');
 }
