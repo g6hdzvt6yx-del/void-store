@@ -1080,7 +1080,7 @@ footer {
       <div class="cart-total-label">Итого</div>
       <div class="cart-total-price" id="cart-total">₽0</div>
     </div>
-    <button class="btn-primary" style="width:100%;justify-content:center" onclick="closeCart();showPage('checkout')">
+    <button class="btn-primary" style="width:100%;justify-content:center" onclick="goToCheckout()">
       Оформить заказ <span class="arrow">→</span>
     </button>
   </div>
@@ -1712,7 +1712,11 @@ const SUPABASE_URL = 'https://ioinfqbyurkpyhcnuxhu.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_RmcV-Xg-ZMeQJPx5X-2Dyg_QmO959Bd';
 
 let products = [];
-let cart = [];
+// Загружаем корзину из localStorage (сохраняется при обновлении страницы)
+let cart = (() => {
+  try { return JSON.parse(localStorage.getItem('void_cart') || '[]'); }
+  catch(e) { return []; }
+})();
 let currentProduct = null;
 let currentFilter = 'all';
 
@@ -1875,16 +1879,38 @@ function openProduct(id) {
     `<div class="gallery-thumb ${i===0?'active':''}" onclick="selectThumb(this)">${n}</div>`
   ).join('');
 
-  // Reset size
-  document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active','unavailable'));
-  const sizeBtns = document.querySelectorAll('.size-btn');
-  const sizes = ['XS','S','M','L','XL','XXL'];
-  sizeBtns.forEach((btn, i) => {
-    btn.textContent = sizes[i] || '';
-    if(p.sizes.includes(sizes[i])) btn.classList.remove('unavailable');
-    else btn.classList.add('unavailable');
-    if(sizes[i] === p.sizes[0]) btn.classList.add('active');
-  });
+  // ── Размеры ──
+  const sizesGrid = document.querySelector('.sizes-grid');
+  const sizeTitle = document.querySelector('.size-section-title');
+  if (p.sizes && p.sizes.length > 0 && !(p.sizes.length === 1 && p.sizes[0] === '')) {
+    sizeTitle.style.display = '';
+    sizesGrid.style.display = '';
+    sizesGrid.innerHTML = p.sizes.map((s, i) =>
+      `<button class="size-btn ${i===0?'active':''}" onclick="selectSize(this)">${s}</button>`
+    ).join('');
+  } else {
+    sizeTitle.style.display = 'none';
+    sizesGrid.style.display = 'none';
+  }
+
+  // ── Цвета ──
+  const colorsGrid = document.querySelector('.colors-grid');
+  const colorTitle = document.querySelector('.color-section-title');
+  if (p.colors && p.colors.length > 0 && !(p.colors.length === 1 && p.colors[0] === '')) {
+    colorTitle.style.display = '';
+    colorsGrid.style.display = '';
+    colorsGrid.innerHTML = p.colors.map((c, i) =>
+      `<div class="color-swatch ${i===0?'active':''}" 
+        style="background:${c};${i===0?'border-color:var(--text)':''}" 
+        onclick="selectColor(this, '${c}')"></div>`
+    ).join('');
+    if (p.colors[0]) {
+      document.getElementById('selected-color').textContent = p.colors[0];
+    }
+  } else {
+    colorTitle.style.display = 'none';
+    colorsGrid.style.display = 'none';
+  }
 
   showPage('product');
 }
@@ -1938,6 +1964,8 @@ function changeQty(id, delta) {
 }
 
 function updateCartUI() {
+  // Сохраняем корзину в localStorage
+  try { localStorage.setItem('void_cart', JSON.stringify(cart)); } catch(e) {}
   const total = cart.reduce((s,i) => s + i.qty, 0);
   const countEl = document.getElementById('cart-count');
   countEl.textContent = total;
@@ -1982,6 +2010,12 @@ function openCart() {
 function closeCart() {
   document.getElementById('cart-overlay').classList.remove('open');
   document.getElementById('cart-panel').classList.remove('open');
+}
+
+function goToCheckout() {
+  closeCart();
+  // Небольшая задержка для корректной работы на мобильных
+  setTimeout(() => showPage('checkout'), 300);
 }
 
 // ── CHECKOUT ──
@@ -2066,6 +2100,7 @@ async function submitOrder() {
 
 function resetOrder() {
   cart = [];
+  try { localStorage.removeItem('void_cart'); } catch(e) {}
   updateCartUI();
   document.getElementById('checkout-wrap').style.display = '';
   document.getElementById('success-screen').classList.remove('show');
