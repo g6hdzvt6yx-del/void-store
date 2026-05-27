@@ -2046,13 +2046,25 @@ function selectPayment(el) {
 }
 
 async function submitOrder() {
+  const btn = document.querySelector('.btn-submit');
+
+  // Защита от дублей — блокируем кнопку
+  if (btn.disabled) return;
+  btn.disabled = true;
+  btn.textContent = 'Отправляем...';
+
   const inputs = document.querySelectorAll('#checkout .form-input');
   let valid = true;
   inputs.forEach(inp => {
     if(!inp.value.trim()) { inp.style.borderColor='var(--red)'; valid=false; }
     else inp.style.borderColor='var(--border)';
   });
-  if(!valid) { showToast('Заполните все поля'); return; }
+  if(!valid) {
+    showToast('Заполните все поля');
+    btn.disabled = false;
+    btn.textContent = 'Подтвердить заказ →';
+    return;
+  }
 
   // Собираем данные заказа
   const fields = document.querySelectorAll('#checkout .form-input');
@@ -2088,7 +2100,6 @@ async function submitOrder() {
     console.error('Ошибка отправки в Telegram:', e);
   }
 
-  // Показываем экран успеха
   // Показываем нужный блок оплаты
   const isSBP = payment === 'СБП';
   document.getElementById('sbp-details').style.display = isSBP ? 'block' : 'none';
@@ -2096,6 +2107,10 @@ async function submitOrder() {
 
   document.getElementById('checkout-wrap').style.display = 'none';
   document.getElementById('success-screen').classList.add('show');
+
+  // Разблокируем кнопку для следующего заказа
+  btn.disabled = false;
+  btn.textContent = 'Подтвердить заказ →';
 }
 
 function resetOrder() {
