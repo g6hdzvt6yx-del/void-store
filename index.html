@@ -22,6 +22,7 @@
   --accent-dim: rgba(200,169,110,0.15);
   --accent-hover: #d4b97e;
   --red: #c0392b;
+  --green: #5cb85c;
   --font-display: 'Cormorant Garamond', Georgia, serif;
   --font-mono: 'DM Mono', monospace;
   --ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -1220,8 +1221,8 @@ footer {
       <div>
         <div class="footer-col-title">Помощь</div>
         <div class="footer-links">
-          <a>Доставка и оплата</a>
-          <a>Возврат</a>
+          <a onclick="showPage('delivery')">Доставка и оплата</a>
+          <a onclick="showPage('returns')">Возврат</a>
           <a>Размерная сетка</a>
           <a>Уход за одеждой</a>
         </div>
@@ -1378,7 +1379,203 @@ footer {
   </div>
 </div>
 
-<!-- ═══════ CHECKOUT ═══════ -->
+<!-- ═══════ DELIVERY ═══════ -->
+<div class="page" id="delivery">
+  <div style="padding-top:89px;max-width:900px;margin:0 auto;padding-left:40px;padding-right:40px;padding-bottom:80px">
+
+    <div style="padding:60px 0 40px">
+      <div style="font-size:10px;letter-spacing:0.35em;text-transform:uppercase;color:var(--accent);margin-bottom:16px">Информация</div>
+      <h1 style="font-family:var(--font-display);font-size:clamp(48px,6vw,80px);font-weight:300;line-height:1;margin-bottom:16px">Доставка <em style="font-style:italic;color:var(--accent)">и оплата</em></h1>
+      <p style="color:var(--text-muted);line-height:1.8;max-width:560px">Доставляем по всей России. Выберите удобный способ при оформлении заказа.</p>
+    </div>
+
+    <div style="height:1px;background:var(--border);margin-bottom:56px"></div>
+
+    <!-- Способы доставки -->
+    <div style="margin-bottom:56px">
+      <div style="font-size:10px;letter-spacing:0.35em;text-transform:uppercase;color:var(--accent);margin-bottom:32px">Способы доставки</div>
+
+      <div style="display:grid;gap:2px">
+
+        <div style="background:var(--bg2);padding:28px 32px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;align-items:start">
+          <div>
+            <div style="font-family:var(--font-display);font-size:22px;font-weight:300;margin-bottom:6px">Курьер</div>
+            <div style="color:var(--text-dim);font-size:10px;letter-spacing:0.15em;text-transform:uppercase">По Москве и СПб</div>
+          </div>
+          <div>
+            <div style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px">Срок</div>
+            <div style="color:var(--text-muted)">1–2 рабочих дня</div>
+          </div>
+          <div>
+            <div style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px">Стоимость</div>
+            <div style="color:var(--accent)">₽350</div>
+          </div>
+        </div>
+
+        <div style="background:var(--bg2);padding:28px 32px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;align-items:start">
+          <div>
+            <div style="font-family:var(--font-display);font-size:22px;font-weight:300;margin-bottom:6px">СДЭК</div>
+            <div style="color:var(--text-dim);font-size:10px;letter-spacing:0.15em;text-transform:uppercase">По всей России</div>
+          </div>
+          <div>
+            <div style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px">Срок</div>
+            <div style="color:var(--text-muted)">2–7 рабочих дней</div>
+          </div>
+          <div>
+            <div style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px">Стоимость</div>
+            <div style="color:var(--accent)">₽250–500</div>
+          </div>
+        </div>
+
+        <div style="background:var(--bg2);padding:28px 32px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;align-items:start">
+          <div>
+            <div style="font-family:var(--font-display);font-size:22px;font-weight:300;margin-bottom:6px">Почта России</div>
+            <div style="color:var(--text-dim);font-size:10px;letter-spacing:0.15em;text-transform:uppercase">По всей России</div>
+          </div>
+          <div>
+            <div style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px">Срок</div>
+            <div style="color:var(--text-muted)">5–14 рабочих дней</div>
+          </div>
+          <div>
+            <div style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px">Стоимость</div>
+            <div style="color:var(--accent)">₽150–300</div>
+          </div>
+        </div>
+
+        <div style="background:var(--bg2);padding:28px 32px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;align-items:start">
+          <div>
+            <div style="font-family:var(--font-display);font-size:22px;font-weight:300;margin-bottom:6px">Самовывоз</div>
+            <div style="color:var(--text-dim);font-size:10px;letter-spacing:0.15em;text-transform:uppercase">Москва</div>
+          </div>
+          <div>
+            <div style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px">Срок</div>
+            <div style="color:var(--text-muted)">После подтверждения</div>
+          </div>
+          <div>
+            <div style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px">Стоимость</div>
+            <div style="color:var(--green)">Бесплатно</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Бесплатная доставка -->
+    <div style="background:var(--accent-dim);border:1px solid var(--accent);padding:32px;margin-bottom:56px">
+      <div style="font-family:var(--font-display);font-size:24px;font-weight:300;margin-bottom:10px">Бесплатная доставка</div>
+      <div style="color:var(--text-muted);line-height:1.8">При заказе от <span style="color:var(--accent)">₽5 000</span> доставка курьером по Москве и СПб — бесплатно. При заказе от <span style="color:var(--accent)">₽7 000</span> доставка СДЭК по всей России — бесплатно.</div>
+    </div>
+
+    <!-- Оплата -->
+    <div style="margin-bottom:56px">
+      <div style="font-size:10px;letter-spacing:0.35em;text-transform:uppercase;color:var(--accent);margin-bottom:32px">Способы оплаты</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:2px">
+        <div style="background:var(--bg2);padding:24px;text-align:center">
+          <div style="font-size:28px;margin-bottom:12px">💳</div>
+          <div style="font-family:var(--font-display);font-size:18px;font-weight:300;margin-bottom:6px">Картой онлайн</div>
+          <div style="color:var(--text-dim);font-size:11px">Visa, MasterCard, МИР</div>
+        </div>
+        <div style="background:var(--bg2);padding:24px;text-align:center">
+          <div style="font-size:28px;margin-bottom:12px">📱</div>
+          <div style="font-family:var(--font-display);font-size:18px;font-weight:300;margin-bottom:6px">СБП</div>
+          <div style="color:var(--text-dim);font-size:11px">Система быстрых платежей</div>
+        </div>
+        <div style="background:var(--bg2);padding:24px;text-align:center">
+          <div style="font-size:28px;margin-bottom:12px">📦</div>
+          <div style="font-family:var(--font-display);font-size:18px;font-weight:300;margin-bottom:6px">Наложенный платёж</div>
+          <div style="color:var(--text-dim);font-size:11px">Оплата при получении</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-ghost" onclick="showPage('home')" style="display:inline-flex;align-items:center;gap:12px">← На главную</button>
+  </div>
+</div>
+
+<!-- ═══════ RETURNS ═══════ -->
+<div class="page" id="returns">
+  <div style="padding-top:89px;max-width:900px;margin:0 auto;padding-left:40px;padding-right:40px;padding-bottom:80px">
+
+    <div style="padding:60px 0 40px">
+      <div style="font-size:10px;letter-spacing:0.35em;text-transform:uppercase;color:var(--accent);margin-bottom:16px">Политика</div>
+      <h1 style="font-family:var(--font-display);font-size:clamp(48px,6vw,80px);font-weight:300;line-height:1;margin-bottom:16px">Возврат <em style="font-style:italic;color:var(--accent)">товара</em></h1>
+      <p style="color:var(--text-muted);line-height:1.8;max-width:560px">Мы хотим чтобы вы были довольны каждой покупкой. Если что-то пошло не так — мы разберёмся.</p>
+    </div>
+
+    <div style="height:1px;background:var(--border);margin-bottom:56px"></div>
+
+    <!-- Сроки -->
+    <div style="background:var(--accent-dim);border:1px solid var(--accent);padding:32px;margin-bottom:40px;display:grid;grid-template-columns:1fr 1fr;gap:32px">
+      <div>
+        <div style="font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:var(--accent);margin-bottom:8px">Срок возврата</div>
+        <div style="font-family:var(--font-display);font-size:48px;font-weight:300;color:var(--accent);line-height:1">30</div>
+        <div style="color:var(--text-muted)">дней с момента получения</div>
+      </div>
+      <div>
+        <div style="font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:var(--accent);margin-bottom:8px">Возврат средств</div>
+        <div style="font-family:var(--font-display);font-size:48px;font-weight:300;color:var(--accent);line-height:1">7</div>
+        <div style="color:var(--text-muted)">рабочих дней после получения</div>
+      </div>
+    </div>
+
+    <!-- Условия -->
+    <div style="margin-bottom:40px">
+      <div style="font-size:10px;letter-spacing:0.35em;text-transform:uppercase;color:var(--accent);margin-bottom:24px">Условия возврата</div>
+      <div style="display:grid;gap:2px">
+
+        <div style="background:var(--bg2);padding:24px 28px;display:flex;gap:20px;align-items:flex-start">
+          <div style="width:32px;height:32px;border:1px solid var(--accent);display:flex;align-items:center;justify-content:center;color:var(--accent);flex-shrink:0;font-size:14px">✓</div>
+          <div>
+            <div style="font-family:var(--font-display);font-size:18px;margin-bottom:6px">Товар не подошёл</div>
+            <div style="color:var(--text-muted);line-height:1.7;font-size:12px">Принимаем возврат в течение 30 дней если товар не был в использовании, сохранён товарный вид, все бирки на месте. Стоимость обратной доставки — за счёт покупателя.</div>
+          </div>
+        </div>
+
+        <div style="background:var(--bg2);padding:24px 28px;display:flex;gap:20px;align-items:flex-start">
+          <div style="width:32px;height:32px;border:1px solid var(--accent);display:flex;align-items:center;justify-content:center;color:var(--accent);flex-shrink:0;font-size:14px">✓</div>
+          <div>
+            <div style="font-family:var(--font-display);font-size:18px;margin-bottom:6px">Брак или наша ошибка</div>
+            <div style="color:var(--text-muted);line-height:1.7;font-size:12px">Если товар пришёл с дефектом или мы отправили не то — все расходы по возврату берём на себя. Замена или полный возврат средств на ваш выбор.</div>
+          </div>
+        </div>
+
+        <div style="background:var(--bg2);padding:24px 28px;display:flex;gap:20px;align-items:flex-start">
+          <div style="width:32px;height:32px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text-dim);flex-shrink:0;font-size:14px">✕</div>
+          <div>
+            <div style="font-family:var(--font-display);font-size:18px;margin-bottom:6px">Не принимаем возврат</div>
+            <div style="color:var(--text-muted);line-height:1.7;font-size:12px">Товары со следами использования, стирки, повреждений по вине покупателя. Товары без оригинальных бирок и упаковки.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Как оформить -->
+    <div style="margin-bottom:56px">
+      <div style="font-size:10px;letter-spacing:0.35em;text-transform:uppercase;color:var(--accent);margin-bottom:24px">Как оформить возврат</div>
+      <div style="display:grid;gap:2px">
+        <div style="background:var(--bg2);padding:20px 28px;display:flex;gap:20px;align-items:center">
+          <div style="font-family:var(--font-display);font-size:32px;color:var(--accent);font-weight:300;width:40px;flex-shrink:0">1</div>
+          <div style="color:var(--text-muted)">Напишите нам на email или в Telegram с номером заказа и причиной возврата</div>
+        </div>
+        <div style="background:var(--bg2);padding:20px 28px;display:flex;gap:20px;align-items:center">
+          <div style="font-family:var(--font-display);font-size:32px;color:var(--accent);font-weight:300;width:40px;flex-shrink:0">2</div>
+          <div style="color:var(--text-muted)">Мы подтвердим возврат и сообщим адрес для отправки</div>
+        </div>
+        <div style="background:var(--bg2);padding:20px 28px;display:flex;gap:20px;align-items:center">
+          <div style="font-family:var(--font-display);font-size:32px;color:var(--accent);font-weight:300;width:40px;flex-shrink:0">3</div>
+          <div style="color:var(--text-muted)">Отправьте товар. Трек-номер пришлите нам — это ускорит обработку</div>
+        </div>
+        <div style="background:var(--bg2);padding:20px 28px;display:flex;gap:20px;align-items:center">
+          <div style="font-family:var(--font-display);font-size:32px;color:var(--accent);font-weight:300;width:40px;flex-shrink:0">4</div>
+          <div style="color:var(--text-muted)">После получения и проверки — возврат средств в течение 7 рабочих дней</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-ghost" onclick="showPage('home')" style="display:inline-flex;align-items:center;gap:12px">← На главную</button>
+  </div>
+</div>
 <div class="page" id="checkout">
   <div class="checkout-wrap" id="checkout-wrap">
     <div class="checkout-form-side">
@@ -1441,14 +1638,8 @@ footer {
           <label class="payment-method active" onclick="selectPayment(this)">
             <input type="radio" name="payment" checked>
             <div class="payment-radio"></div>
-            <span class="payment-method-name">Картой онлайн</span>
-            <span class="payment-method-desc">Visa / MasterCard / МИР</span>
-          </label>
-          <label class="payment-method" onclick="selectPayment(this)">
-            <input type="radio" name="payment">
-            <div class="payment-radio"></div>
             <span class="payment-method-name">СБП</span>
-            <span class="payment-method-desc">Система быстрых платежей</span>
+            <span class="payment-method-desc">Перевод по номеру телефона</span>
           </label>
           <label class="payment-method" onclick="selectPayment(this)">
             <input type="radio" name="payment">
@@ -1485,7 +1676,40 @@ footer {
   <div class="success-screen" id="success-screen">
     <div class="success-icon">✓</div>
     <div class="success-title">Заказ принят</div>
-    <p class="success-sub">Спасибо! Мы отправили подтверждение на вашу почту. Ожидайте звонка менеджера в течение часа.</p>
+    <p class="success-sub" id="success-message">Спасибо за заказ! Мы свяжемся с вами в ближайшее время для подтверждения.</p>
+
+    <!-- Реквизиты для СБП -->
+    <div id="sbp-details" style="display:none;width:100%;max-width:460px;margin-bottom:32px">
+      <div style="border:1px solid var(--accent);background:var(--accent-dim);padding:28px;text-align:left">
+        <div style="font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:var(--accent);margin-bottom:16px">Реквизиты для оплаты</div>
+        <div style="font-family:var(--font-display);font-size:22px;font-weight:300;margin-bottom:8px">Перевод через СБП</div>
+        <div style="color:var(--text-muted);line-height:1.8;margin-bottom:16px">
+          Переведите сумму заказа по номеру телефона:
+        </div>
+        <div style="background:var(--bg3);padding:16px 20px;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <div>
+            <div style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-dim);margin-bottom:4px">Номер телефона</div>
+            <div style="font-family:var(--font-display);font-size:22px;font-weight:300;color:var(--accent)" id="sbp-phone">+7 (___) ___-__-__</div>
+          </div>
+        </div>
+        <div style="color:var(--text-dim);font-size:11px;line-height:1.7">
+          В комментарии к переводу укажите ваше имя и номер телефона.<br>
+          После оплаты отправим вам подтверждение.
+        </div>
+      </div>
+    </div>
+
+    <!-- Наложенный платёж -->
+    <div id="cash-details" style="display:none;width:100%;max-width:460px;margin-bottom:32px">
+      <div style="border:1px solid var(--border);background:var(--bg2);padding:28px;text-align:left">
+        <div style="font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:var(--accent);margin-bottom:16px">Оплата при получении</div>
+        <div style="font-family:var(--font-display);font-size:22px;font-weight:300;margin-bottom:8px">Наложенный платёж</div>
+        <div style="color:var(--text-muted);line-height:1.8">
+          Оплата производится при получении посылки в пункте выдачи или курьеру.<br><br>
+          Мы свяжемся с вами для подтверждения заказа и уточнения деталей доставки.
+        </div>
+      </div>
+    </div>
     <button class="btn-primary" onclick="showPage('home');resetOrder()">
       Вернуться в магазин <span class="arrow">→</span>
     </button>
@@ -1841,6 +2065,11 @@ async function submitOrder() {
   }
 
   // Показываем экран успеха
+  // Показываем нужный блок оплаты
+  const isSBP = payment === 'СБП';
+  document.getElementById('sbp-details').style.display = isSBP ? 'block' : 'none';
+  document.getElementById('cash-details').style.display = isSBP ? 'none' : 'block';
+
   document.getElementById('checkout-wrap').style.display = 'none';
   document.getElementById('success-screen').classList.add('show');
 }
@@ -1850,6 +2079,8 @@ function resetOrder() {
   updateCartUI();
   document.getElementById('checkout-wrap').style.display = '';
   document.getElementById('success-screen').classList.remove('show');
+  document.getElementById('sbp-details').style.display = 'none';
+  document.getElementById('cash-details').style.display = 'none';
 }
 
 // ── TOAST ──
