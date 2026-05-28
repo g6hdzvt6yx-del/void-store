@@ -259,6 +259,38 @@ main { padding: 100px 32px 48px; max-width: 1200px; margin: 0 auto; }
 .photo-upload-icon { font-size: 28px; color: var(--text-dim); margin-bottom: 8px; }
 .photo-upload-text { color: var(--text-muted); font-size: 11px; }
 .photo-upload-text span { color: var(--accent); }
+
+/* Размеры */
+.size-picker { display: flex; gap: 8px; flex-wrap: wrap; }
+.size-pill {
+  min-width: 44px; height: 44px; padding: 0 12px;
+  border: 1px solid var(--border);
+  background: none; color: var(--text-muted);
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  cursor: pointer; transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 4px;
+}
+.size-pill:hover { border-color: var(--border-hover); color: var(--text); }
+.size-pill.active { border-color: var(--accent); color: var(--accent); background: rgba(200,169,110,0.12); }
+
+/* Цвета */
+.color-picker { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+.color-pill {
+  width: 36px; height: 36px; border-radius: 50%;
+  cursor: pointer; border: 2px solid transparent;
+  transition: all 0.2s; position: relative;
+  flex-shrink: 0;
+}
+.color-pill:hover { transform: scale(1.12); }
+.color-pill.active { border-color: var(--accent); box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent); }
+.color-pill-label {
+  font-size: 9px; color: var(--text-dim); letter-spacing: 0.1em;
+  text-transform: uppercase; text-align: center; margin-top: 4px;
+  width: 44px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.color-pill-wrap { display: flex; flex-direction: column; align-items: center; }
 .photo-preview {
   width: 100%; height: 160px; object-fit: cover; margin-top: 12px; display: none;
 }
@@ -492,14 +524,40 @@ main { padding: 100px 32px 48px; max-width: 1200px; margin: 0 auto; }
 
     <div class="form-group">
       <label class="form-label">Размеры *</label>
-      <input class="form-input" type="text" id="f-sizes" placeholder="S,M,L,XL">
-      <div class="form-hint">Через запятую: S,M,L,XL или XS,S,M,L,XL,XXL</div>
+      <input type="hidden" id="f-sizes" value="M">
+      <div class="size-picker" id="size-picker">
+        <button type="button" class="size-pill" onclick="toggleSize('XS')">XS</button>
+        <button type="button" class="size-pill" onclick="toggleSize('S')">S</button>
+        <button type="button" class="size-pill active" onclick="toggleSize('M')">M</button>
+        <button type="button" class="size-pill" onclick="toggleSize('L')">L</button>
+        <button type="button" class="size-pill" onclick="toggleSize('XL')">XL</button>
+        <button type="button" class="size-pill" onclick="toggleSize('XXL')">XXL</button>
+      </div>
+      <div class="form-hint" style="margin-top:8px">Можно выбрать несколько размеров</div>
     </div>
 
     <div class="form-group">
       <label class="form-label">Цвета</label>
-      <input class="form-input" type="text" id="f-colors" placeholder="черный, белый, серый, бежевый">
-      <div class="form-hint">Названия цветов через запятую: черный, белый, серый, бежевый, хаки, синий, красный и др.</div>
+      <input type="hidden" id="f-colors" value="#1a1a1a">
+      <div class="color-picker" id="color-picker">
+        <div class="color-pill-wrap"><div class="color-pill active" style="background:#1a1a1a" onclick="toggleColor(this,'#1a1a1a','черный')"></div><div class="color-pill-label">Чёрный</div></div>
+        <div class="color-pill-wrap"><div class="color-pill" style="background:#f0ece4;border:1px solid #555" onclick="toggleColor(this,'#f0ece4','белый')"></div><div class="color-pill-label">Белый</div></div>
+        <div class="color-pill-wrap"><div class="color-pill" style="background:#4a4a4a" onclick="toggleColor(this,'#4a4a4a','серый')"></div><div class="color-pill-label">Серый</div></div>
+        <div class="color-pill-wrap"><div class="color-pill" style="background:#9a9a9a" onclick="toggleColor(this,'#9a9a9a','светло-серый')"></div><div class="color-pill-label">Св.серый</div></div>
+        <div class="color-pill-wrap"><div class="color-pill" style="background:#c8b89a" onclick="toggleColor(this,'#c8b89a','бежевый')"></div><div class="color-pill-label">Бежевый</div></div>
+        <div class="color-pill-wrap"><div class="color-pill" style="background:#8b7355" onclick="toggleColor(this,'#8b7355','коричневый')"></div><div class="color-pill-label">Коричн.</div></div>
+        <div class="color-pill-wrap"><div class="color-pill" style="background:#6b7c4a" onclick="toggleColor(this,'#6b7c4a','хаки')"></div><div class="color-pill-label">Хаки</div></div>
+        <div class="color-pill-wrap"><div class="color-pill" style="background:#2c4a7c" onclick="toggleColor(this,'#2c4a7c','синий')"></div><div class="color-pill-label">Синий</div></div>
+        <div class="color-pill-wrap"><div class="color-pill" style="background:#1a2d4a" onclick="toggleColor(this,'#1a2d4a','темно-синий')"></div><div class="color-pill-label">Т.синий</div></div>
+        <div class="color-pill-wrap"><div class="color-pill" style="background:#5b9bd5" onclick="toggleColor(this,'#5b9bd5','голубой')"></div><div class="color-pill-label">Голубой</div></div>
+        <div class="color-pill-wrap"><div class="color-pill" style="background:#c0392b" onclick="toggleColor(this,'#c0392b','красный')"></div><div class="color-pill-label">Красный</div></div>
+        <div class="color-pill-wrap"><div class="color-pill" style="background:#7b2d2d" onclick="toggleColor(this,'#7b2d2d','бордовый')"></div><div class="color-pill-label">Бордовый</div></div>
+        <div class="color-pill-wrap"><div class="color-pill" style="background:#2d7b4a" onclick="toggleColor(this,'#2d7b4a','зеленый')"></div><div class="color-pill-label">Зелёный</div></div>
+        <div class="color-pill-wrap"><div class="color-pill" style="background:#6b7c3a" onclick="toggleColor(this,'#6b7c3a','оливковый')"></div><div class="color-pill-label">Оливк.</div></div>
+        <div class="color-pill-wrap"><div class="color-pill" style="background:#d4819a" onclick="toggleColor(this,'#d4819a','розовый')"></div><div class="color-pill-label">Розовый</div></div>
+        <div class="color-pill-wrap"><div class="color-pill" style="background:#c0613a" onclick="toggleColor(this,'#c0613a','терракот')"></div><div class="color-pill-label">Терракот</div></div>
+      </div>
+      <div class="form-hint" style="margin-top:8px">Можно выбрать несколько цветов</div>
     </div>
 
     <div class="form-group">
@@ -761,8 +819,8 @@ function openModal(id) {
     document.getElementById('f-price').value = p.price || '';
     document.getElementById('f-tag').value = p.tag || '';
     document.getElementById('f-show').value = String(p.show !== false);
-    document.getElementById('f-sizes').value = p.sizes || '';
-    document.getElementById('f-colors').value = hexToColorNames(p.colors || '');
+    setSizePicker(p.sizes || 'M');
+    setColorPicker(p.colors || '#1a1a1a');
     document.getElementById('f-img').value = p.img || '';
     if (p.img) {
       const prev = document.getElementById('img-preview-url');
@@ -785,8 +843,8 @@ function clearModal() {
   });
   document.getElementById('f-category').value = 'top';
   document.getElementById('f-show').value = 'true';
-  document.getElementById('f-sizes').value = '';
-  document.getElementById('f-colors').value = 'черный';
+  setSizePicker('M');
+  setColorPicker('#1a1a1a');
   document.getElementById('img-preview-url').style.display = 'none';
   document.getElementById('img-preview-upload').style.display = 'none';
   document.getElementById('btn-save').disabled = false;
@@ -880,6 +938,56 @@ async function uploadFile(file) {
     progress.style.display = 'none';
     bar.style.width = '0';
   }
+}
+
+// ══ РАЗМЕРЫ PICKER ══
+function toggleSize(size) {
+  const hidden = document.getElementById('f-sizes');
+  const pills = document.querySelectorAll('#size-picker .size-pill');
+  const current = hidden.value ? hidden.value.split(',').map(s=>s.trim()).filter(Boolean) : [];
+  const idx = current.indexOf(size);
+  if (idx === -1) current.push(size);
+  else current.splice(idx, 1);
+  if (current.length === 0) current.push(size); // минимум 1
+  hidden.value = current.join(',');
+  // Обновляем визуал
+  const order = ['XS','S','M','L','XL','XXL'];
+  pills.forEach(pill => {
+    pill.classList.toggle('active', current.includes(pill.textContent.trim()));
+  });
+}
+
+function setSizePicker(sizesStr) {
+  const hidden = document.getElementById('f-sizes');
+  hidden.value = sizesStr || 'M';
+  const sizes = sizesStr ? sizesStr.split(',').map(s=>s.trim()) : ['M'];
+  document.querySelectorAll('#size-picker .size-pill').forEach(pill => {
+    pill.classList.toggle('active', sizes.includes(pill.textContent.trim()));
+  });
+}
+
+// ══ ЦВЕТА PICKER ══
+function toggleColor(el, hex, name) {
+  const hidden = document.getElementById('f-colors');
+  const current = hidden.value ? hidden.value.split(',').map(s=>s.trim()).filter(Boolean) : [];
+  const idx = current.indexOf(hex);
+  if (idx === -1) current.push(hex);
+  else { if (current.length > 1) current.splice(idx, 1); }
+  hidden.value = current.join(',');
+  document.querySelectorAll('#color-picker .color-pill').forEach(pill => {
+    const pillHex = pill.getAttribute('onclick').match(/'(#[^']+)'/)?.[1];
+    pill.classList.toggle('active', pillHex && current.includes(pillHex));
+  });
+}
+
+function setColorPicker(hexStr) {
+  const hidden = document.getElementById('f-colors');
+  hidden.value = hexStr || '#1a1a1a';
+  const colors = hexStr ? hexStr.split(',').map(s=>s.trim()) : ['#1a1a1a'];
+  document.querySelectorAll('#color-picker .color-pill').forEach(pill => {
+    const pillHex = pill.getAttribute('onclick').match(/'(#[^']+)'/)?.[1];
+    pill.classList.toggle('active', pillHex && colors.includes(pillHex));
+  });
 }
 
 // ══ ЦВЕТА ══
