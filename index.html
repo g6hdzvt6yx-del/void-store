@@ -41,7 +41,7 @@ body {
   overflow-x: hidden;
 }
 
-/* Custom cursor */
+/* Custom cursor - только на десктопе */
 #cursor {
   position: fixed;
   width: 8px; height: 8px;
@@ -54,6 +54,10 @@ body {
   mix-blend-mode: difference;
 }
 #cursor.expand { width: 40px; height: 40px; background: rgba(200,169,110,0.3); }
+@media (hover: none), (pointer: coarse) {
+  #cursor { display: none !important; }
+  body { cursor: auto !important; }
+}
 
 /* Grain overlay */
 body::before {
@@ -1844,6 +1848,16 @@ function onProductsLoaded() {
   renderCatalog();
 }
 
+// ── WISHLIST ──
+function toggleWish(btn, id) {
+  const isActive = btn.classList.toggle('wished');
+  btn.textContent = isActive ? '♥' : '♡';
+  btn.style.color = isActive ? 'var(--accent)' : '';
+  btn.style.borderColor = isActive ? 'var(--accent)' : '';
+  const p = products.find(x => x.id === id);
+  if(p) showToast(isActive ? `${p.name} добавлен в избранное` : `${p.name} удалён из избранного`);
+}
+
 // ── CURSOR ──
 const cursor = document.getElementById('cursor');
 document.addEventListener('mousemove', e => {
@@ -1889,7 +1903,7 @@ function productCard(p, onclick) {
       ${p.tag ? `<div class="product-tag">${p.tag}</div>` : ''}
       <div class="product-actions">
         <button class="btn-add" onclick="event.stopPropagation();addToCart(${p.id})">🛒 В корзину</button>
-        <button class="btn-wish-card" onclick="event.stopPropagation()">♡</button>
+        <button class="btn-wish-card" onclick="event.stopPropagation();toggleWish(this,${p.id})">♡</button>
       </div>
     </div>
     <div class="product-info">
