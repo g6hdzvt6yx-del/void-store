@@ -128,6 +128,42 @@ nav {
 }
 .cart-count.show { opacity: 1; transform: scale(1); }
 
+.wish-nav-btn {
+  background: none; border: none;
+  color: var(--text-muted); font-size: 20px;
+  cursor: pointer; position: relative;
+  display: flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px;
+  transition: color 0.3s;
+  line-height: 1;
+}
+.wish-nav-btn:hover { color: var(--accent); }
+.wish-count {
+  position: absolute; top: -4px; right: -4px;
+  background: var(--accent); color: var(--bg);
+  width: 14px; height: 14px; border-radius: 50%;
+  font-size: 8px; display: flex; align-items: center; justify-content: center;
+  opacity: 0; transform: scale(0);
+  transition: all 0.3s var(--ease);
+  font-family: var(--font-mono);
+  pointer-events: none;
+}
+.wish-count.show { opacity: 1; transform: scale(1); }
+.btn-wish-card.wished { color: var(--accent) !important; border-color: var(--accent) !important; }
+.btn-wish.wished { color: var(--accent) !important; border-color: var(--accent) !important; }
+
+.wishlist-empty {
+  flex-direction: column; align-items: center; justify-content: center;
+  min-height: 400px; gap: 20px; text-align: center;
+}
+.wishlist-empty-icon { font-size: 64px; opacity: 0.15; line-height: 1; }
+.wishlist-empty-title {
+  font-family: var(--font-display);
+  font-size: 36px; font-weight: 300;
+  color: var(--text-muted);
+}
+.wishlist-empty-sub { color: var(--text-dim); font-size: 12px; line-height: 1.8; }
+
 /* ───── PAGES ───── */
 .page { display: none; min-height: 100vh; }
 .page.active { display: block; }
@@ -1107,6 +1143,10 @@ footer {
     <li><a onclick="showPage('catalog')">Распродажа</a></li>
   </ul>
   <div class="nav-right">
+    <button class="wish-nav-btn" onclick="showPage('wishlist')" title="Избранное">
+      ♡
+      <span class="wish-count" id="wish-count"></span>
+    </button>
     <button class="cart-btn" onclick="openCart()">
       Корзина
       <span class="cart-count" id="cart-count">0</span>
@@ -1412,7 +1452,7 @@ footer {
       </div>
       <div class="buy-actions">
         <button class="btn-buy" onclick="addCurrentToCart()">Добавить в корзину</button>
-        <button class="btn-wish" title="В избранное">♡</button>
+        <button class="btn-wish" id="product-wish-btn" title="В избранное" onclick="toggleProductWish()">♡</button>
       </div>
 
       <!-- Доставка -->
@@ -1781,15 +1821,38 @@ footer {
   </div>
 </div>
 
+<!-- ═══════ WISHLIST ═══════ -->
+<div class="page" id="wishlist">
+  <div style="padding-top:89px">
+    <div class="catalog-header">
+      <div class="catalog-title" style="font-style:italic">Избранное</div>
+    </div>
+    <div style="padding:40px 80px 80px">
+      <div class="products-grid" id="wishlist-grid"></div>
+      <div class="wishlist-empty" id="wishlist-empty" style="display:none">
+        <div class="wishlist-empty-icon">♡</div>
+        <div class="wishlist-empty-title">Избранное пусто</div>
+        <div class="wishlist-empty-sub">Добавляйте понравившиеся товары<br>и они появятся здесь</div>
+        <button class="btn-primary" onclick="showPage('catalog')" style="margin-top:8px">
+          В каталог <span class="arrow">→</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 // ═══ SUPABASE CONFIG ═══
 const SUPABASE_URL = 'https://ioinfqbyurkpyhcnuxhu.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_RmcV-Xg-ZMeQJPx5X-2Dyg_QmO959Bd';
 
 let products = [];
-// Загружаем корзину из localStorage (сохраняется при обновлении страницы)
 let cart = (() => {
   try { return JSON.parse(localStorage.getItem('void_cart') || '[]'); }
+  catch(e) { return []; }
+})();
+let wishlist = (() => {
+  try { return JSON.parse(localStorage.getItem('void_wishlist') || '[]'); }
   catch(e) { return []; }
 })();
 let currentProduct = null;
@@ -1850,12 +1913,47 @@ function onProductsLoaded() {
 
 // ── WISHLIST ──
 function toggleWish(btn, id) {
-  const isActive = btn.classList.toggle('wished');
+  const idx = wishlist.indexOf(id);
+  const isActive = idx === -1;
+  if (isActive) wishlist.push(id);
+  else wishlist.splice(idx, 1);
+  try { localStorage.setItem('void_wishlist', JSON.stringify(wishlist)); } catch(e) {}
+  btn.classList.toggle('wished', isActive);
   btn.textContent = isActive ? '♥' : '♡';
   btn.style.color = isActive ? 'var(--accent)' : '';
   btn.style.borderColor = isActive ? 'var(--accent)' : '';
+  updateWishUI();
+  if (document.getElementById('wishlist').classList.contains('active')) renderWishlist();
   const p = products.find(x => x.id === id);
   if(p) showToast(isActive ? `${p.name} добавлен в избранное` : `${p.name} удалён из избранного`);
+}
+
+function toggleProductWish() {
+  if (!currentProduct) return;
+  const btn = document.getElementById('product-wish-btn');
+  toggleWish(btn, currentProduct.id);
+}
+
+function updateWishUI() {
+  const count = wishlist.length;
+  const el = document.getElementById('wish-count');
+  if (!el) return;
+  el.textContent = count;
+  if (count > 0) el.classList.add('show');
+  else el.classList.remove('show');
+}
+
+function renderWishlist() {
+  const grid = document.getElementById('wishlist-grid');
+  const empty = document.getElementById('wishlist-empty');
+  const items = products.filter(p => wishlist.includes(p.id));
+  if (!items.length) {
+    grid.innerHTML = '';
+    empty.style.display = 'flex';
+  } else {
+    empty.style.display = 'none';
+    grid.innerHTML = items.map(p => productCard(p, `openProduct(${p.id})`)).join('');
+  }
 }
 
 // ── CURSOR ──
@@ -1877,6 +1975,7 @@ function showPage(id, fromHistory) {
   window.scrollTo(0,0);
   if(id === 'catalog') renderCatalog();
   if(id === 'checkout') renderSummary();
+  if(id === 'wishlist') renderWishlist();
   // Сохраняем в истории браузера, чтобы работала кнопка "Назад"
   if(!fromHistory) {
     history.pushState({page: id}, '', '#' + id);
@@ -1903,7 +2002,7 @@ function productCard(p, onclick) {
       ${p.tag ? `<div class="product-tag">${p.tag}</div>` : ''}
       <div class="product-actions">
         <button class="btn-add" onclick="event.stopPropagation();addToCart(${p.id})">🛒 В корзину</button>
-        <button class="btn-wish-card" onclick="event.stopPropagation();toggleWish(this,${p.id})">♡</button>
+        <button class="btn-wish-card ${wishlist.includes(p.id)?'wished':''}" onclick="event.stopPropagation();toggleWish(this,${p.id})" style="${wishlist.includes(p.id)?'color:var(--accent);border-color:var(--accent)':''}">${wishlist.includes(p.id)?'♥':'♡'}</button>
       </div>
     </div>
     <div class="product-info">
@@ -1996,6 +2095,13 @@ function openProduct(id) {
     colorTitle.style.display = 'none';
     colorsGrid.style.display = 'none';
   }
+
+  const wishBtn = document.getElementById('product-wish-btn');
+  const isWished = wishlist.includes(p.id);
+  wishBtn.textContent = isWished ? '♥' : '♡';
+  wishBtn.classList.toggle('wished', isWished);
+  wishBtn.style.color = isWished ? 'var(--accent)' : '';
+  wishBtn.style.borderColor = isWished ? 'var(--accent)' : '';
 
   showPage('product');
 }
@@ -2225,7 +2331,7 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2800);
 }
 
-// Init: загружаем товары из Google Sheets
+updateWishUI();
 loadProducts();
 </script>
 </body>
